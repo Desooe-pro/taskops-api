@@ -1,12 +1,15 @@
 package com.formation.taskops.service;
 
-import com.formation.taskops.model.Task;
-import com.formation.taskops.model.TaskStatus;
-import com.formation.taskops.repository.TaskRepository;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import com.formation.taskops.model.Task;
+import com.formation.taskops.model.TaskStatus;
+import com.formation.taskops.repository.TaskRepository;
 
 /**
  * Couche metier. Elle isole les regles de gestion du controleur (HTTP)
@@ -66,5 +69,18 @@ public class TaskService {
             throw new TaskNotFoundException(id);
         }
         repository.deleteById(id);
+    }
+
+    /**
+     * Compte les taches par statut.
+     * Renvoie une Map ordonnee : TODO, IN_PROGRESS, DONE.
+     */
+    @Transactional(readOnly = true)
+    public Map<TaskStatus, Long> countByStatus() {
+        Map<TaskStatus, Long> resultat = new EnumMap<>(TaskStatus.class);
+            for (TaskStatus statut : TaskStatus.values()) {
+            resultat.put(statut, (long) repository.findByStatus(statut).size());
+        }
+        return resultat;
     }
 }
