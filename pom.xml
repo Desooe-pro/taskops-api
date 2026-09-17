@@ -28,7 +28,7 @@
 
         <!-- Coordonnees SonarQube Cloud : remplacez par VOS valeurs -->
         <sonar.organization>votre-pseudo</sonar.organization>
-        <sonar.projectKey>votre-pseudo_taskops-api</sonar.projectKey>
+        <sonar.projectKey>1479db89ccf6ed18fdc62c03c97d7ad4f</sonar.projectKey>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <!-- Indique a Sonar ou trouver le rapport de couverture produit par JaCoCo -->
         <sonar.coverage.jacoco.xmlReportPaths>
