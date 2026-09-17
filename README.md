@@ -30,3 +30,11 @@ L'API écoute sur `http://localhost:8080`.
 ## Contribuer
 1. Créer une branche depuis `main` : `git switch -c feat/ma-fonctionnalite`
 2. Commits au format [Conventional Commits](https://www.conventionalcommits.org/fr/)
+
+[![CI](https://github.com/votre-pseudo/taskops-
+api/actions/workflows/ci.yml/badge.svg)](https://github.com/votre-pseudo/taskops-
+api/actions/workflows/ci.yml)
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=votre-
+pseudo_taskops-api&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=votre-
+pseudo_taskops-api)
