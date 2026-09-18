@@ -37,6 +37,13 @@ jobs:
     # -DgenerateBackupPoms=false : pas de pom.xml.versionsBackup parasite.
       - name: Fixer la version dans le pom
         run: ./mvnw -B versions:set -DnewVersion="${VERSION}" -DgenerateBackupPoms=false
+      - name: Determiner le chemin de l'artefact
+        id: artifact_path
+        run: |
+          FINAL_NAME=$(./mvnw -q help:evaluate -Dexpression=project.build.finalName -DforceStdout)
+          ARTIFACT_PATH="target/${FINAL_NAME}.jar"
+          echo "ARTIFACT_PATH=$ARTIFACT_PATH" >> "$GITHUB_ENV"
+          echo "path=$ARTIFACT_PATH" >> "$GITHUB_OUTPUT"
     # On RECONSTRUIT ET RETESTE : l'artefact publie doit etre issu
     # d'un build complet et verifie, jamais d'un raccourci.
       - name: Construire l'artefact
@@ -44,9 +51,9 @@ jobs:
       - name: Verifier le contenu de l'artefact
         run: |
           ls -lh target/*.jar
-          # Le JAR embarque-t-il bien ses metadonnees de version ?
-          unzip -p "target/taskops-api-${VERSION}.jar" \
-            BOOT-INF/classes/META-INF/build-info.properties
+          # Le JAR embarque-t-il bien ses metadonnees de version ? 
+          echo "target/taskops-api-${VERSION}.jar"
+          unzip -p "target/taskops-api-${VERSION}.jar" BOOT-INF/classes/META-INF/build-info.properties
     # --generate-notes construit les notes a partir des PR fusionnees
     # depuis la release precedente. C'est la recompense des Conventional Commits.
       - name: Publier la release GitHub
@@ -54,12 +61,12 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create "${GITHUB_REF_NAME}" \
-            "target/taskops-api-${VERSION}.jar" \
+            "$ARTIFACT_PATH" \
             --title "TaskOps API ${GITHUB_REF_NAME}" \
             --generate-notes
       - name: Conserver l'artefact comme artefact de workflow
         uses: actions/upload-artifact@v4
         with:
-          name: taskops-api-${{ env.VERSION }}
-          path: target/taskops-api-${{ env.VERSION }}.jar
+          name: taskops-api-${{ github.ref_name }}
+          path: ${{ steps.artifact_path.outputs.path }}
           retention-days: 30
