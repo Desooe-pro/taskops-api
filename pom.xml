@@ -34,14 +34,6 @@
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.build.directory}/site/jacoco/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
-        <!-- Coordonnees SonarQube Cloud : remplacez par VOS valeurs -->
-        <sonar.organization>votre-pseudo</sonar.organization>
-        <sonar.projectKey>votre-pseudo_taskops-api</sonar.projectKey>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <!-- Indique a Sonar ou trouver le rapport de couverture produit par JaCoCo -->
-        <sonar.coverage.jacoco.xmlReportPaths>
-        ${project.build.directory}/site/jacoco/jacoco.xml
-        </sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <dependencies>
@@ -94,6 +86,14 @@
             <artifactId>spring-boot-starter-data-jpa-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- Actuator : expose l'etat et les metadonnees de l'application.
+            Indispensable pour les smoke tests (ce module), les probes
+            Kubernetes (Module 7) et Prometheus (Module 8). -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -102,6 +102,17 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <!-- Genere META-INF/build-info.properties DANS le JAR :
+                        version, date de construction, artifactId.
+                        Actuator le lit et l'expose sur /actuator/info. -->
+                    <execution>
+                        <id>build-info</id>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- JaCoCo : instrumente le bytecode pour savoir quelles lignes
@@ -130,6 +141,7 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 </project>
